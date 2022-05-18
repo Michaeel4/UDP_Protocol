@@ -1,3 +1,4 @@
+from datetime import datetime
 import math
 import socket
 import struct
@@ -10,10 +11,6 @@ class SequenceNumbers:
     def __init__(self, sequence, data):
         self.sequence = sequence
         self.data = data
-
-
-sys.setrecursionlimit(2000000)
-print(sys.getrecursionlimit())
 
 # Init Server Configuration
 localIP = "127.0.0.1"
@@ -49,11 +46,13 @@ while True:
         global start_timer
 
         start_timer = time.time()
+        print(datetime.now())
 
         print(f"Starting server on any incoming IP with port {6969}")
-        data, addr = sock.recvfrom(1024)
-        received_message = bytes("Received".encode())
-        sock.sendto(received_message, addr)
+        data, addr = sock.recvfrom(30015)
+
+        #received_message = bytes("Received".encode())
+        #sock.sendto(received_message, addr)
         global file_name
         global file_length
         global length
@@ -70,7 +69,7 @@ while True:
 
         file_length = struct.unpack("<II", read_sequence[6:14])  # little endian unsigned integer 8 byte for file name
         print(f"File Length is: {file_length[0]} bytes")
-        print(f"Type is: {type}, Receiving Header")
+        #print(f"Type is: {type}, Receiving Header")
         # print(chr(x))
         ## Pulling File Name
         for i in data[14:]:
@@ -123,17 +122,25 @@ while True:
             count = 0
             if (sock.fileno == -1):
                 return
-            # time.sleep(0.1)
-            #while True:
 
-            data, addr = sock.recvfrom(1024)
+
+            data, addr = sock.recvfrom(30015)
             received_message = bytes("Received".encode())
-            sock.sendto(received_message, addr)
+
+            #print(data[6:])
+            send_data = bytearray(6)
+            send_data[0:4] = data[0:4]
+            send_data[4] = data[4]
+            send_data[5] = 0xFE
+
+
+            #time.sleep(0.1)
+            sock.sendto(send_data, addr)
             read_sequence = data
             type = np.uint8(read_sequence[5])  # packet type
             uid = np.uint8(read_sequence[4])  # packet type
 
-            print(type)
+            #print(type)
 
             if (type == 1):
                 if(checksum != None):
@@ -144,7 +151,7 @@ while True:
                 #print(checksum.to_bytes(16, 'little'))
                 #print(data[6:])
                 sequence_number = np.uint32(int.from_bytes(read_sequence[0:4], 'little'))
-                print(f"{int.from_bytes(read_sequence[0:4], 'little')} sequence ")
+                #print(f"{int.from_bytes(read_sequence[0:4], 'little')} sequence ")
 
                 #print(f"sequence number is: {((sequence_number))}")
                 #print(f"uid is {uid}")
@@ -158,7 +165,8 @@ while True:
             elif (type == 255):
                 sock.close()
 
-                overall_time = (time.time() - start_timer) * 100
+                overall_time = (time.time() - start_timer) * 10
+                print(datetime.now())
                 formatted_overall_time = "{:.2f}".format(overall_time)
                 print("=======")
                 print(f"Time to receive package: {formatted_overall_time} ms")
