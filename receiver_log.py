@@ -133,6 +133,7 @@ while True:
         while True:
             global test_list
             global checksum
+            global file_name
             time_end = 0
             sequence_iter = 255
             count = 0
@@ -140,9 +141,10 @@ while True:
                 return
 
 
+
+
             data, addr = sock.recvfrom(30015)
             received_message = bytes("Received".encode())
-
             #print(data[6:])
             send_data = bytearray(6)
             send_data[0:4] = data[0:4]
@@ -181,14 +183,16 @@ while True:
             elif (type == 255):
                 #sock.close()
 
+
                 overall_time = (time.time() - start_timer) * 10
                 print(datetime.now())
                 formatted_overall_time = "{:.2f}".format(overall_time)
-                logger.info(f"Sending time: {formatted_overall_time}ms for file {file_name} / from {addr}")
+                logger.info(f"Sending time: {formatted_overall_time}ms / from {addr}")
 
                 print("=======")
                 print(f"Time to receive package: {formatted_overall_time} ms")
                 print("=======")
+
 
                 print(f"Type is {np.uint8(data[5])}, receiving trailer..")
                 #checksumbuffer = bytearray(checksum)
