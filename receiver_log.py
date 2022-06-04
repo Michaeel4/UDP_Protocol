@@ -31,7 +31,7 @@ class SequenceNumbers:
 # Init Server Configuration
 localIP = "127.0.0.1"
 localPort = 20001
-blockSize = 64000 
+blockSize = 64000
 ###########################
 # File Related Information
 file_name = ""
@@ -51,6 +51,8 @@ sock.bind(('', 6969))
 
 while True:
 
+
+
     start_timer = 0
     ###########################
     checksum_correct = False
@@ -58,6 +60,8 @@ while True:
 
     # Receive Header to get information about the packet size and the filename.
     def receive_header():
+
+        print("header called")
         global start_timer
 
         start_timer = time.time()
@@ -97,34 +101,22 @@ while True:
 
     def write_file():
         global file_name
+        global test_list
+
+        if(file_name == ""):
+            pass
         # Generate a new file by the received file name.
         f2 = open(file_name, 'wb')
         # Iterate through our list that we filled with the sequence number and the data received in received packets
         # and write it to the data.
         for i in test_list:
-            # print(i)
+            #print(i)
             f2.write(i)
             # print(i)
 
         f2.close()
-
-
-
-
-
-
-    def write_data(sequence_number, data):
-        #print("Receiving Data Packet..")
-        message = ""
-        # for i in data:
-        # if i.to_bytes(1, 'little') == b'\x01':
-        #data_buffer = bytearray(data[6:])
-        # print(f"{data_buffer}")
-        # print("writing data buffer")
-        #f.write(data_buffer)
-        # time.sleep(0.2)
-        test_list.insert(sequence_number - 1, data[6:])
-        receive_packets()
+        test_list = []
+        file_name = ""
 
 
     def receive_packets(f=None):
@@ -133,6 +125,9 @@ while True:
             global test_list
             global checksum
             global file_name
+            print("receive packets called")
+
+
             time_end = 0
             sequence_iter = 255
             count = 0
@@ -143,6 +138,8 @@ while True:
 
 
             data, addr = sock.recvfrom(blockSize)
+
+
             received_message = bytes("Received".encode())
             #print(data[6:])
             send_data = bytearray(6)
@@ -192,12 +189,16 @@ while True:
                 print(f"Time to receive package: {formatted_overall_time} ms")
                 print("=======")
 
+                write_file()
+
+                receive_header()
 
                 print(f"Type is {np.uint8(data[5])}, receiving trailer..")
                 #checksumbuffer = bytearray(checksum)
                 if checksum != None:
                     print("Checksum correct")
                     print(f"Saving file {file_name} to root directory of the project")
+
                     checksum_correct = True
                     #sock.close()
 
@@ -205,6 +206,8 @@ while True:
                     #print("Checksum incorrect")
                     print("Checksum correct")
                     print(f"Saving file {file_name} to root directory of the project")
+                    # Generate a new file by the received file name.
+
                     checksum_correct = True
 
                     #print(data[6:].hex())
@@ -217,22 +220,10 @@ while True:
 
 
 
+
+
+
+
+
+
     receive_header()
-
-
-
-        # Generate a new file by the received file name.
-    f2 = open(file_name, 'wb')
-        # Iterate through our list that we filled with the sequence number and the data received in received packets
-        # and write it to the data.
-    for i in test_list:
-        #print(i)
-        f2.write(i)
-        #print(i)
-
-
-
-    f2.close()
-
-
-
