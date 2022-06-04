@@ -12,7 +12,7 @@ import logging
 
 Log_Format = "%(levelname)s %(asctime)s - %(message)s"
 
-logging.basicConfig(filename = "logfile.log",
+logging.basicConfig(filename ="logfile_111111.log",
                     filemode = "w",
                     format = Log_Format,
                     level = logging.INFO)
