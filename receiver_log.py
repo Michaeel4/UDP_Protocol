@@ -61,7 +61,7 @@ while True:
     # Receive Header to get information about the packet size and the filename.
     def receive_header():
 
-        print("header called")
+        #print("header called")
         global start_timer
 
         start_timer = time.time()
@@ -125,7 +125,6 @@ while True:
             global test_list
             global checksum
             global file_name
-            print("receive packets called")
 
 
             time_end = 0
