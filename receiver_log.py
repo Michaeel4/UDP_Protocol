@@ -31,8 +31,7 @@ class SequenceNumbers:
 # Init Server Configuration
 localIP = "127.0.0.1"
 localPort = 20001
-bufferSize = 1024
-blockSize = 1024
+blockSize = 64000 
 ###########################
 # File Related Information
 file_name = ""
@@ -65,7 +64,7 @@ while True:
         print(datetime.now())
 
         print(f"Starting server on any incoming IP with port {6969}")
-        data, addr = sock.recvfrom(30015)
+        data, addr = sock.recvfrom(blockSize)
 
         #received_message = bytes("Received".encode())
         #sock.sendto(received_message, addr)
@@ -143,7 +142,7 @@ while True:
 
 
 
-            data, addr = sock.recvfrom(30015)
+            data, addr = sock.recvfrom(blockSize)
             received_message = bytes("Received".encode())
             #print(data[6:])
             send_data = bytearray(6)
